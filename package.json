@@ -1,0 +1,17 @@
+{
+  "name": "noqljs",
+  "version": "0.0.1-dev",
+  "description": "A simple JS database without query language",
+  "main": "src/index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Olivier Scherrer",
+  "license": "MIT",
+  "dependencies": {
+
+  }
+}
