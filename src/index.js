@@ -1,22 +1,27 @@
 'use strict';
 
-const { getStore, setStore } = require("./instance/index");
+const {fork} = require('child_process');
+const {getStore, setStore} = require('./store/index');
 
-const API = {
-    getters: {}, setters: {}
-};
+let accessorProcess;
 
 module.exports = {
-    start({ getters, setters, initialValue = {} }) {
-        API.getters = require(getters);
-        API.setters = require(setters);
-        setStore(initialValue);
+    start({getters, setters}) {
+        accessorProcess = fork(__dirname + '/storeAccess/index');
+        accessorProcess.send({
+            'init': {
+                getters,
+                setters
+            }
+        });
+        console.log('Data accessor started');
     },
 
     invokeGet(functionName, ...args) {
         const getter = API.getters[functionName];
 
         if (getter) {
+            accessorProcess.send('get');
             return getter(getStore(), ...args);
         } else {
             console.error(`Getter not found ${ functionName }`);
@@ -27,6 +32,7 @@ module.exports = {
         const setter = API.setters[functionName];
 
         if (setter) {
+            accessorProcess.send('set');
             return setStore(setter(getStore(), ...args));
         } else {
             console.error(`Setter not found ${ functionName }`);

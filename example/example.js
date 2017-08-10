@@ -9,8 +9,7 @@ function getFilePath(name) {
 
 noqldb.start({
     setters: getFilePath('./setters'),
-    getters: getFilePath('./getters'),
-    initialValue: []
+    getters: getFilePath('./getters')
 });
 
 noqldb.invokeSet("insertRecord");

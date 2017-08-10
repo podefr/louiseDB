@@ -20,6 +20,6 @@ Desired features for second milestone:
 - Allow REST access to getters and setters
 
 Desired features if time and implementation allow:
-- Support for large datasets by distibuting database across several systems
+- Support for large datasets by distributing database across several systems
 - Support for transactions
 - Immutability
