@@ -1,7 +1,6 @@
 'use strict';
 
 const {fork} = require('child_process');
-const {getStore, setStore} = require('./store/index');
 
 let accessorProcess;
 
@@ -17,25 +16,22 @@ module.exports = {
         console.log('Data accessor started');
     },
 
-    invokeGet(functionName, ...args) {
-        const getter = API.getters[functionName];
-
-        if (getter) {
-            accessorProcess.send('get');
-            return getter(getStore(), ...args);
-        } else {
-            console.error(`Getter not found ${ functionName }`);
-        }
+    async invokeGet(functionName, ...args) {
+        return await sendReceive('invokeGet', functionName, args);
     },
 
-    invokeSet(functionName, ...args) {
-        const setter = API.setters[functionName];
-
-        if (setter) {
-            accessorProcess.send('set');
-            return setStore(setter(getStore(), ...args));
-        } else {
-            console.error(`Setter not found ${ functionName }`);
-        }
+    async invokeSet(functionName, ...args) {
+        return await sendReceive('invokeSet', functionName, args);
     }
 };
+
+async function sendReceive(topicName, functionName, args) {
+    accessorProcess.send({
+        [topicName]: {
+            functionName,
+            args
+        }
+    });
+
+    return new Promise(resolve => accessorProcess.on('message', resolve));
+}

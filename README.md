@@ -2,13 +2,19 @@
 
 NoQLDB stands for No Query Language Database.
 
-It's a dumb in-memory database that uses JS data structures to store data.
-Reads and writes are done via JS function calls.
+It's an in-memory database that uses JS data structures to store data, there are no DB schemas.
+Reads and writes are done via JS function calls (getters and setters), there is no query language.
+The database can only be used as a library, embedded into your software. To use it as a server, you can wrap it
+into your own server, or use NoQLDB-server (coming soon to a github near you).
 
 Current features:
 - In-memory database
 - No Schema/No query language
 - Read/write using JS functions
+- Use database as a library (no CLI nor server)
+
+Limitations:
+- DB size is limited to maximum amount of memory that your node.js process can allocate
 
 Desired features for MVP:
 - Hot reload of JS setters and getters without restarting the data store and losing database state

@@ -1,6 +1,6 @@
 'use strict';
 
-let store;
+let store = [];
 let version = 0;
 
 module.exports = {
