@@ -18,6 +18,8 @@ Limitations:
 - DB size is limited to maximum amount of memory that your node.js process can allocate
 
 Desired features for MVP:
+- Support for transactions
+- Immutability
 - Hot reload of JS setters and getters without restarting the data store and losing database state
 - Persist database to disk.
 - Restore database from disk/snapshot
@@ -28,5 +30,3 @@ Desired features for second milestone:
 
 Desired features if time and implementation allow:
 - Support for large datasets by distributing database across several systems
-- Support for transactions
-- Immutability
