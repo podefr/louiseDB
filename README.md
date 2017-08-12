@@ -1,4 +1,5 @@
 # NoQLDB.js
+# LouiseDB
 
 NoQLDB stands for No Query Language Database.
 

@@ -5,16 +5,29 @@ let setters;
 
 const API = {
     init(args) {
-        setters = args.setters ? require(args.setters) : {};
-        getters = args.getters ? require(args.getters) : {};
-        console.log('Accessor initialized');
+        try {
+            setters = args.setters ? require(args.setters) : {};
+            getters = args.getters ? require(args.getters) : {};
+
+            sendSuccess('Data accessor initialized');
+        } catch (err) {
+            sendError({
+                message: 'Failed initializing data accessors',
+                err
+            });
+        }
     },
 
     invokeGet({ functionName, args }) {
         console.log(`get: calling ${functionName} with ${ JSON.stringify(args) }`);
 
         if (getters[functionName]) {
-            process.send({ success: getters[functionName](getStore(), ...args)});
+            try {
+                const value = getters[functionName](getStore(), ...args);
+                sendSuccess(value);
+            } catch (err) {
+                sendError(err);
+            }
         } else {
             handleAccessorNotFound(functionName);
         }
@@ -24,7 +37,12 @@ const API = {
         console.log(`set: calling ${functionName} with ${ JSON.stringify(args) }`);
 
         if (setters[functionName]) {
-            process.send({ success: setStore(setters[functionName](getStore(), ...args))});
+            try {
+                setStore(setters[functionName](getStore(), ...args));
+                sendSuccess('updated');
+            } catch (err) {
+                sendError(err);
+            }
         } else {
             handleAccessorNotFound(functionName);
         }
@@ -43,12 +61,24 @@ process.on('message', message => {
 
 function handleAPIMethodNotFound(methodName) {
     const error = `Store Access Internal Error: ${ methodName } isn't a valid method.`;
-    process.send({ error });
     console.error(error);
+    sendError(error);
 }
 
 function handleAccessorNotFound(functionName) {
     const error = `Store Accessor not found: ${ functionName } isn't specified`;
-    process.send({ error });
     console.error(error);
+    sendError(error);
+}
+
+function sendSuccess(payload) {
+    process.send({
+        success: payload
+    });
+}
+
+function sendError(error) {
+    process.send({
+        error
+    });
 }

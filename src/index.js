@@ -5,33 +5,41 @@ const {fork} = require('child_process');
 let accessorProcess;
 
 module.exports = {
-    start({getters, setters}) {
+    async init({getters, setters}) {
         accessorProcess = fork(__dirname + '/storeAccess/index');
-        accessorProcess.send({
-            'init': {
-                getters,
-                setters
-            }
+        console.log('Started master DB process');
+
+        return await sendReceive('init', {
+            getters,
+            setters
         });
-        console.log('Data accessor started');
     },
 
     async invokeGet(functionName, ...args) {
-        return await sendReceive('invokeGet', functionName, args);
+        return await sendReceive('invokeGet', {
+            functionName, args
+        });
     },
 
     async invokeSet(functionName, ...args) {
-        return await sendReceive('invokeSet', functionName, args);
+        return await sendReceive('invokeSet', {
+            functionName, args
+        });
     }
 };
 
-async function sendReceive(topicName, functionName, args) {
-    accessorProcess.send({
-        [topicName]: {
-            functionName,
-            args
-        }
-    });
+async function sendReceive(topicName, args) {
+    return new Promise((resolve, reject) => {
+        accessorProcess.send({
+            [topicName]: args
+        });
 
-    return new Promise(resolve => accessorProcess.on('message', resolve));
+        accessorProcess.on('message', message => {
+            if (message.success) {
+                resolve(message.success);
+            } else {
+                reject(message.error);
+            }
+        })
+    });
 }
