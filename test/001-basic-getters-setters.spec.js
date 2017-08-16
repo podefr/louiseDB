@@ -3,11 +3,11 @@
 const {getTestAPI} = require('./helpers');
 const expect = require('expect.js');
 
-const noqldb = require('../src/index');
+const louiseDB = require('../src/index');
 
 describe('Given DB is initialized with basic getters and setters', () => {
     before(async() => {
-        await noqldb.init({
+        await louiseDB.init({
             setters: getTestAPI('001-setters'),
             getters: getTestAPI('001-getters')
         });
@@ -15,7 +15,7 @@ describe('Given DB is initialized with basic getters and setters', () => {
 
     describe('AND records are inserted', () => {
         beforeEach(async() => {
-            await noqldb.invokeSet('insertRecords', [
+            await louiseDB.invokeSet('insertRecords', [
                 { name: 'Jon Snow', jobs: ['ranger', 'steward', 'commander'] },
                 { name: 'Samwell Tarly', jobs: ['steward'] },
                 { name: 'Aegon', jobs: ['maester'] }
@@ -26,7 +26,7 @@ describe('Given DB is initialized with basic getters and setters', () => {
             let records;
 
             beforeEach(async() => {
-                records = await noqldb.invokeGet('getByJob', 'steward');
+                records = await louiseDB.invokeGet('getByJob', 'steward');
             });
 
             it('Then returns matching characters', () => {
@@ -39,6 +39,6 @@ describe('Given DB is initialized with basic getters and setters', () => {
     });
 
     after(async() => {
-        await noqldb.stop();
+        await louiseDB.stop();
     });
 });

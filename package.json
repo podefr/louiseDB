@@ -1,6 +1,6 @@
 {
-  "name": "noqljs",
-  "version": "0.0.1-dev",
+  "name": "louisedb",
+  "version": "0.0.1-wip",
   "description": "A simple JS database without query language",
   "main": "src/index.js",
   "directories": {

@@ -3,11 +3,11 @@
 const {getTestAPI} = require('./helpers');
 const expect = require('expect.js');
 
-const noqldb = require('../src/index');
+const louiseDB = require('../src/index');
 
 describe('Given DB is initialized', () => {
     before(async() => {
-        await noqldb.init({
+        await louiseDB.init({
             setters: getTestAPI('002-setters'),
             getters: getTestAPI('002-getters')
         });
@@ -15,17 +15,17 @@ describe('Given DB is initialized', () => {
 
     describe('When an album is added', () => {
         beforeEach(async() => {
-            await noqldb.invokeSet('addAlbum', 'Ride The Lightning', ['Fight Fire with Fire']);
+            await louiseDB.invokeSet('addAlbum', 'Ride The Lightning', ['Fight Fire with Fire']);
         });
 
         it('Then tracks are available', async() => {
-            expect(await noqldb.invokeGet('getTracks', 'Ride The Lightning')).to.eql(['Fight Fire with Fire']);
+            expect(await louiseDB.invokeGet('getTracks', 'Ride The Lightning')).to.eql(['Fight Fire with Fire']);
         });
 
         describe('When records are inserted with a faulty setter', () => {
             beforeEach(async() => {
                 try {
-                    await noqldb.invokeSet('addTracks', 'Ride The Lightning', ['Ride The Lightning']);
+                    await louiseDB.invokeSet('addTracks', 'Ride The Lightning', ['Ride The Lightning']);
                 } catch (err) {
 
                 }
@@ -35,7 +35,7 @@ describe('Given DB is initialized', () => {
                 let tracks;
 
                 beforeEach(async() => {
-                    tracks = await noqldb.invokeGet('getTracks', 'Ride The Lightning');
+                    tracks = await louiseDB.invokeGet('getTracks', 'Ride The Lightning');
                 });
 
                 it('Then newer tracks weren\'t added', () => {
@@ -46,6 +46,6 @@ describe('Given DB is initialized', () => {
     });
 
     after(async() => {
-        await noqldb.stop();
+        await louiseDB.stop();
     });
 });
