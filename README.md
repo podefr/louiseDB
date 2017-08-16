@@ -13,12 +13,12 @@ Current features:
 - No Schema/No query language
 - Read/write using JS functions
 - Use database as a library (no CLI nor server)
+- Support for transactions. All setters exhibit the ACID properties.
 
 Limitations:
 - DB size is limited to maximum amount of memory that your node.js process can allocate
 
 Desired features for MVP:
-- Support for transactions
 - Immutability
 - Hot reload of JS setters and getters without restarting the data store and losing database state
 - Persist database to disk.

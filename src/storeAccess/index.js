@@ -1,4 +1,5 @@
-const { setStore, getStore } = require('../store/index');
+const serializeError = require('serialize-error');
+const {setStore, getStoreCopy, getStore} = require('../store/index');
 
 let getters;
 let setters;
@@ -10,38 +11,35 @@ const API = {
             getters = args.getters ? require(args.getters) : {};
 
             sendSuccess('Data accessor initialized');
-        } catch (err) {
-            sendError({
-                message: 'Failed initializing data accessors',
-                err
-            });
+        } catch (error) {
+            sendError('ERROR 001: Failed initializing data accessors', error);
         }
     },
 
-    invokeGet({ functionName, args }) {
+    invokeGet({functionName, args}) {
         console.log(`get: calling ${functionName} with ${ JSON.stringify(args) }`);
 
         if (getters[functionName]) {
             try {
                 const value = getters[functionName](getStore(), ...args);
                 sendSuccess(value);
-            } catch (err) {
-                sendError(err);
+            } catch (error) {
+                sendError(`ERROR 101: Failed calling invokeGet with ${functionName} / ${ JSON.stringify(args) }`, error);
             }
         } else {
             handleAccessorNotFound(functionName);
         }
     },
 
-    invokeSet({ functionName, args }) {
+    invokeSet({functionName, args}) {
         console.log(`set: calling ${functionName} with ${ JSON.stringify(args) }`);
 
         if (setters[functionName]) {
             try {
-                setStore(setters[functionName](getStore(), ...args));
+                setStore(setters[functionName](getStoreCopy(), ...args));
                 sendSuccess('updated');
-            } catch (err) {
-                sendError(err);
+            } catch (error) {
+                sendError(`ERROR 201: Failed calling invokeSet with ${functionName} / ${ JSON.stringify(args) }`, error);
             }
         } else {
             handleAccessorNotFound(functionName);
@@ -77,8 +75,9 @@ function sendSuccess(payload) {
     });
 }
 
-function sendError(error) {
+function sendError(message, error) {
     process.send({
-        error
+        message,
+        error: serializeError(error)
     });
 }

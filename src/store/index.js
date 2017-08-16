@@ -1,6 +1,8 @@
 'use strict';
 
-let store = [];
+const {jsonCopy} = require('../helpers');
+
+let store = {};
 let version = 0;
 
 module.exports = {
@@ -11,6 +13,10 @@ module.exports = {
 
     getStore() {
         return store;
+    },
+
+    getStoreCopy() {
+        return jsonCopy(store);
     },
 
     getVersion() {

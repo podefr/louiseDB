@@ -6,6 +6,10 @@ let accessorProcess;
 
 module.exports = {
     async init({getters, setters}) {
+        if (isCurrentProcessRunning()) {
+            throw new Error('Already started, please call stop() first on your running instance');
+        }
+
         accessorProcess = fork(__dirname + '/storeAccess/index');
         console.log('Started master DB process');
 
@@ -13,6 +17,16 @@ module.exports = {
             getters,
             setters
         });
+    },
+
+    async stop() {
+        if (accessorProcess) {
+            accessorProcess.on('close', () => Promise.resolve);
+            console.log('Started master DB process');
+            accessorProcess.kill();
+        }
+
+        return Promise.resolve();
     },
 
     async invokeGet(functionName, ...args) {
@@ -30,16 +44,20 @@ module.exports = {
 
 async function sendReceive(topicName, args) {
     return new Promise((resolve, reject) => {
-        accessorProcess.send({
-            [topicName]: args
-        });
-
-        accessorProcess.on('message', message => {
+        accessorProcess.once('message', message => {
             if (message.success) {
                 resolve(message.success);
             } else {
-                reject(message.error);
+                reject(new Error(JSON.stringify(message.error)));
             }
-        })
+        });
+
+        accessorProcess.send({
+            [topicName]: args
+        });
     });
+}
+
+function isCurrentProcessRunning() {
+    return accessorProcess && !accessorProcess.killed;
 }

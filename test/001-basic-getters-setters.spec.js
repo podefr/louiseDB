@@ -6,7 +6,7 @@ const expect = require('expect.js');
 const noqldb = require('../src/index');
 
 describe('Given DB is initialized with basic getters and setters', () => {
-    beforeEach(async() => {
+    before(async() => {
         await noqldb.init({
             setters: getTestAPI('001-setters'),
             getters: getTestAPI('001-getters')
@@ -15,10 +15,14 @@ describe('Given DB is initialized with basic getters and setters', () => {
 
     describe('AND records are inserted', () => {
         beforeEach(async() => {
-            await noqldb.invokeSet('insertRecords');
+            await noqldb.invokeSet('insertRecords', [
+                { name: 'Jon Snow', jobs: ['ranger', 'steward', 'commander'] },
+                { name: 'Samwell Tarly', jobs: ['steward'] },
+                { name: 'Aegon', jobs: ['maester'] }
+            ]);
         });
 
-        describe('When I query characters by job', () => {
+        describe('When querying characters by job', () => {
             let records;
 
             beforeEach(async() => {
@@ -32,5 +36,9 @@ describe('Given DB is initialized with basic getters and setters', () => {
                 ]);
             });
         });
-    })
+    });
+
+    after(async() => {
+        await noqldb.stop();
+    });
 });
