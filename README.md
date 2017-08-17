@@ -1,6 +1,6 @@
 # LouiseDB
 
-LouiseDB an in-memory database that uses JS data structures to store data, there are no DB schemas.
+LouiseDB is an in-memory database that uses JS data structures to store data, there are no DB schemas.
 Reads and writes are done via JS function calls (getters and setters), there is no query language.
 The database can only be used as a library, embedded into your software. To use it as a server, you can wrap it
 into your own server, or use LouiseDB-server (coming soon to a github near you).
