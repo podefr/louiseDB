@@ -1,6 +1,6 @@
 const serializeError = require('serialize-error');
-const Store = require('../Store/index');
-const Persistence = require('../persistence/index');
+const Store = require('./Store');
+const Persistence = require('./Persistence');
 
 let getters;
 let setters;

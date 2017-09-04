@@ -1,6 +1,6 @@
 'use strict';
 
-const { jsonCopy } = require('../helpers');
+const { jsonCopy } = require('./helpers');
 
 let defaultValue = {};
 

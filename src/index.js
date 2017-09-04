@@ -1,6 +1,6 @@
 'use strict';
 
-const {fork} = require('child_process');
+const { fork } = require('child_process');
 
 let accessorProcess;
 
@@ -10,7 +10,7 @@ module.exports = {
             throw new Error('Already started, please call stop() first on your running instance');
         }
 
-        accessorProcess = fork(__dirname + '/storeAccess/index');
+        accessorProcess = fork(__dirname + '/storeAccess');
         console.log('Started master DB process');
 
         return await sendReceive('init', args);
@@ -24,7 +24,7 @@ module.exports = {
                     resolve(args);
                 });
                 accessorProcess.on('error', err => {
-                    console.log(`Error stopping master DB process: ${ err }`);
+                    console.log(`Error stopping master DB process: ${err}`);
                     reject(err);
                 });
 
