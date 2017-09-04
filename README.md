@@ -11,18 +11,17 @@ into your own server, or use LouiseDB-server (coming soon to a github near you).
 - Read/write using JS functions
 - Use database as a library (no CLI nor server)
 - Support for transactions. All setters exhibit the ACID properties.
+- Immutability
+- Persist/Restore database to disk.
 
 ### Current Limitations:
 - DB size is limited to maximum amount of memory that your node.js process can allocate
 
 ### Desired features for MVP:
-- Immutability?
 - Hot reload of JS setters and getters without restarting the data store and losing database state
-- Persist database to disk.
-- Restore database from disk/snapshot
+- Distribute read/write across replicas for performance
 
 ### Desired features for second milestone:
-- Distribute read/write across replicas for performance
 - Allow REST access to getters and setters
 - Introduce LouiseDB-server which runs LouiseDB in its own process and offers a REST API
 
