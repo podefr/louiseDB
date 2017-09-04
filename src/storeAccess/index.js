@@ -1,14 +1,21 @@
 const serializeError = require('serialize-error');
-const {setStore, getStoreCopy, getStore} = require('../store/index');
+const Store = require('../Store/index');
+const Persistence = require('../persistence/index');
 
 let getters;
 let setters;
+let persistence;
+let store;
 
 const API = {
-    init(args) {
+    async init(args) {
         try {
             setters = args.setters ? require(args.setters) : {};
             getters = args.getters ? require(args.getters) : {};
+
+            store = initStore();
+            persistence = initPersistence(args);
+            store.setStore(await persistence.load() || {});
 
             sendSuccess('Data accessor initialized');
         } catch (error) {
@@ -16,30 +23,31 @@ const API = {
         }
     },
 
-    invokeGet({functionName, args}) {
-        console.log(`get: calling ${functionName} with ${ JSON.stringify(args) }`);
+    invokeGet({ functionName, args }) {
+        console.log(`get: calling ${functionName} with ${JSON.stringify(args)}`);
 
         if (getters[functionName]) {
             try {
-                const value = getters[functionName](getStore(), ...args);
+                const value = getters[functionName](store.getStore(), ...args);
                 sendSuccess(value);
             } catch (error) {
-                sendError(`ERROR 101: Failed calling invokeGet with ${functionName} / ${ JSON.stringify(args) }`, error);
+                sendError(`ERROR 101: Failed calling invokeGet with ${functionName} / ${JSON.stringify(args)}`, error);
             }
         } else {
             handleAccessorNotFound(functionName);
         }
     },
 
-    invokeSet({functionName, args}) {
-        console.log(`set: calling ${functionName} with ${ JSON.stringify(args) }`);
+    async invokeSet({ functionName, args }) {
+        console.log(`set: calling ${functionName} with ${JSON.stringify(args)}`);
 
         if (setters[functionName]) {
             try {
-                setStore(setters[functionName](getStoreCopy(), ...args));
+                store.setStore(setters[functionName](store.getStoreCopy(), ...args));
+                await persistence.persist(store.getStore());
                 sendSuccess('updated');
             } catch (error) {
-                sendError(`ERROR 201: Failed calling invokeSet with ${functionName} / ${ JSON.stringify(args) }`, error);
+                sendError(`ERROR 201: Failed calling invokeSet with ${functionName} / ${JSON.stringify(args)}`, error);
             }
         } else {
             handleAccessorNotFound(functionName);
@@ -48,7 +56,7 @@ const API = {
 };
 
 process.on('message', message => {
-    Object.entries(message).forEach(([key, value ]) => {
+    Object.entries(message).forEach(([key, value]) => {
         if (API[key]) {
             API[key](value);
         } else {
@@ -57,14 +65,24 @@ process.on('message', message => {
     });
 });
 
+function initPersistence({ persist }) {
+    return new Persistence({
+        fileName: persist
+    });
+}
+
+function initStore() {
+    return new Store();
+}
+
 function handleAPIMethodNotFound(methodName) {
-    const error = `Store Access Internal Error: ${ methodName } isn't a valid method.`;
+    const error = `Store Access Internal Error: ${methodName} isn't a valid method.`;
     console.error(error);
     sendError(error);
 }
 
 function handleAccessorNotFound(functionName) {
-    const error = `Store Accessor not found: ${ functionName } isn't specified`;
+    const error = `Store Accessor not found: ${functionName} isn't specified`;
     console.error(error);
     sendError(error);
 }

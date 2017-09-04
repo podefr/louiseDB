@@ -5,7 +5,7 @@ const {fork} = require('child_process');
 let accessorProcess;
 
 module.exports = {
-    async init({getters, setters}) {
+    async init(args) {
         if (isCurrentProcessRunning()) {
             throw new Error('Already started, please call stop() first on your running instance');
         }
@@ -13,17 +13,24 @@ module.exports = {
         accessorProcess = fork(__dirname + '/storeAccess/index');
         console.log('Started master DB process');
 
-        return await sendReceive('init', {
-            getters,
-            setters
-        });
+        return await sendReceive('init', args);
     },
 
     async stop() {
         if (accessorProcess) {
-            accessorProcess.on('close', () => Promise.resolve);
-            console.log('Started master DB process');
-            accessorProcess.kill();
+            return new Promise((resolve, reject) => {
+                accessorProcess.on('exit', (...args) => {
+                    console.log(`Successfully stopped master DB process`);
+                    resolve(args);
+                });
+                accessorProcess.on('error', err => {
+                    console.log(`Error stopping master DB process: ${ err }`);
+                    reject(err);
+                });
+
+                console.log('Stopping master DB process');
+                accessorProcess.kill();
+            });
         }
 
         return Promise.resolve();
@@ -42,7 +49,7 @@ module.exports = {
     }
 };
 
-async function sendReceive(topicName, args) {
+function sendReceive(topicName, args) {
     return new Promise((resolve, reject) => {
         accessorProcess.once('message', message => {
             if (message.success) {

@@ -1,20 +1,21 @@
 'use strict';
 
-const {getTestAPI} = require('./helpers');
+const { getTestAPI, deleteFile } = require('./helpers');
 const expect = require('expect.js');
 
 const louiseDB = require('../src/index');
 
-describe('Given DB is initialized with initial getters and setters', () => {
-    before(async() => {
+describe('Given DB is initialized with initial getters and setters and a persistence file', () => {
+    before(async () => {
         await louiseDB.init({
             setters: getTestAPI('003-setters'),
-            getters: getTestAPI('003-getters')
+            getters: getTestAPI('003-getters'),
+            persist: './test-persistence-file'
         });
     });
 
     describe('AND states are inserted', () => {
-        beforeEach(async() => {
+        before(async () => {
             await louiseDB.invokeSet('addStates', [
                 ['District of Columbia', 646449],
                 ['California', 38332521],
@@ -27,7 +28,7 @@ describe('Given DB is initialized with initial getters and setters', () => {
         describe('When querying states by population', () => {
             let states;
 
-            beforeEach(async() => {
+            before(async () => {
                 states = await louiseDB.invokeGet('getStateByPopulation', 10e6);
             });
 
@@ -44,28 +45,40 @@ describe('Given DB is initialized with initial getters and setters', () => {
                 ]);
             });
 
-            describe('Given the instance is stopped', () => {
-                beforeEach(async() => {
+            describe('Given the instance is restarted', () => {
+                before(async () => {
                     await louiseDB.stop();
+                    await louiseDB.init({
+                        setters: getTestAPI('003-setters'),
+                        getters: getTestAPI('003-getters'),
+                        persist: './test-persistence-file'
+                    });
                 });
 
-                describe('When reloading the instance', () => {
-                    beforeEach(async() => {
-                        await louiseDB.init({
-                            setters: getTestAPI('003-setters'),
-                            getters: getTestAPI('003-getters')
-                        });
+                describe('When querying states by population', () => {
+                    before(async () => {
+                        states = await louiseDB.invokeGet('getStateByPopulation', 10e6);
                     });
 
-                    it('Then reloads the previous dataset', async() => {
-                        expect(await louiseDB.invokeGet('getStateByPopulation', 10e6)).to.eql();
+                    it('Then reloads the previous dataset', () => {
+                        expect(states).to.eql([
+                            {
+                                name: 'California',
+                                population: 38332521
+                            },
+                            {
+                                name: 'Pennsylvania',
+                                population: 12773801
+                            }
+                        ]);
                     });
                 });
             });
         });
     });
 
-    after(async() => {
+    after(async () => {
         await louiseDB.stop();
+        await deleteFile('./test-persistence-file');
     });
 });
