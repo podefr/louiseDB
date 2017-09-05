@@ -11,6 +11,7 @@
     "test-debug": "mocha"
   },
   "author": "Olivier Scherrer",
+  "keywords": ["immutable", "database", "json", "in memory", "no schema", "transactional", "db"],
   "license": "MIT",
   "dependencies": {
     "log": "^1.4.0",
