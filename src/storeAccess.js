@@ -1,5 +1,6 @@
 const serializeError = require('serialize-error');
 const Store = require('./Store');
+const log = require('./log');
 const Persistence = require('./Persistence');
 
 let getters;
@@ -24,12 +25,11 @@ const API = {
     },
 
     invokeGet({ functionName, args }) {
-        console.log(`get: calling ${functionName} with ${JSON.stringify(args)}`);
+        log.debug(`get: calling ${functionName} with ${JSON.stringify(args)}`);
 
         if (getters[functionName]) {
             try {
-                const value = getters[functionName](store.getStore(), ...args);
-                sendSuccess(value);
+                sendSuccess(getters[functionName](store.getStore(), ...args));
             } catch (error) {
                 sendError(`ERROR 101: Failed calling invokeGet with ${functionName} / ${JSON.stringify(args)}`, error);
             }
@@ -39,13 +39,13 @@ const API = {
     },
 
     async invokeSet({ functionName, args }) {
-        console.log(`set: calling ${functionName} with ${JSON.stringify(args)}`);
+        log.debug(`set: calling ${functionName} with ${JSON.stringify(args)}`);
 
         if (setters[functionName]) {
             try {
                 store.setStore(setters[functionName](store.getStoreCopy(), ...args));
                 await persistence.persist(store.getStore());
-                sendSuccess('updated');
+                sendSuccess(store.getStore());
             } catch (error) {
                 sendError(`ERROR 201: Failed calling invokeSet with ${functionName} / ${JSON.stringify(args)}`, error);
             }
@@ -77,13 +77,13 @@ function initStore() {
 
 function handleAPIMethodNotFound(methodName) {
     const error = `Store Access Internal Error: ${methodName} isn't a valid method.`;
-    console.error(error);
+    log.error(error);
     sendError(error);
 }
 
 function handleAccessorNotFound(functionName) {
     const error = `Store Accessor not found: ${functionName} isn't specified`;
-    console.error(error);
+    log.error(error);
     sendError(error);
 }
 

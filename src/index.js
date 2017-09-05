@@ -2,16 +2,20 @@
 
 const { fork } = require('child_process');
 
+const log = require('./log');
+
 let accessorProcess;
 
 module.exports = {
     async init(args) {
         if (isCurrentProcessRunning()) {
-            throw new Error('Already started, please call stop() first on your running instance');
+            const error = 'Already started, please call stop() first on your running instance';
+            log.error(error);
+            throw new Error(error);
         }
 
         accessorProcess = fork(__dirname + '/storeAccess');
-        console.log('Started master DB process');
+        log.info('Started master DB process');
 
         return await sendReceive('init', args);
     },
@@ -20,15 +24,15 @@ module.exports = {
         if (accessorProcess) {
             return new Promise((resolve, reject) => {
                 accessorProcess.on('exit', (...args) => {
-                    console.log(`Successfully stopped master DB process`);
+                    log.info(`Successfully stopped master DB process`);
                     resolve(args);
                 });
                 accessorProcess.on('error', err => {
-                    console.log(`Error stopping master DB process: ${err}`);
+                    log.error(`Error stopping master DB process: ${err}`);
                     reject(err);
                 });
 
-                console.log('Stopping master DB process');
+                log.debug('Stopping master DB process');
                 accessorProcess.kill();
             });
         }
