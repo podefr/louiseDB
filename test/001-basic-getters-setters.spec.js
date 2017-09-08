@@ -14,7 +14,7 @@ describe('Given DB is initialized with basic getters and setters', () => {
     });
 
     describe('AND records are inserted', () => {
-        beforeEach(async () => {
+        before(async () => {
             await louiseDB.invokeSet('insertRecords', [
                 { name: 'Jon Snow', jobs: ['ranger', 'steward', 'commander'] },
                 { name: 'Samwell Tarly', jobs: ['steward'] },
@@ -25,7 +25,7 @@ describe('Given DB is initialized with basic getters and setters', () => {
         describe('When querying characters by job', () => {
             let records;
 
-            beforeEach(async () => {
+            before(async () => {
                 records = await louiseDB.invokeGet('getByJob', 'steward');
             });
 

@@ -24,6 +24,18 @@ const API = {
         }
     },
 
+    async reload(args) {
+        if (args.setters) {
+            setters = reloadAPI(args.setters);
+        }
+
+        if (args.getters) {
+            getters = reloadAPI(args.getters);
+        }
+
+        sendSuccess('Data accessor reloaded');
+    },
+
     invokeGet({ functionName, args }) {
         log.debug(`get: calling ${functionName} with ${JSON.stringify(args)}`);
 
@@ -98,4 +110,9 @@ function sendError(message, error) {
         message,
         error: serializeError(error)
     });
+}
+
+function reloadAPI(fileName) {
+    delete require.cache[require.resolve(fileName)];
+    return require(fileName);
 }

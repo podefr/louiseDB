@@ -20,6 +20,11 @@ module.exports = {
         return await sendReceive('init', args);
     },
 
+    async reload(args) {
+        log.debug('reloading getters and setters', args);
+        return await sendReceive('reload', args);
+    },
+
     async stop() {
         if (accessorProcess) {
             return new Promise((resolve, reject) => {

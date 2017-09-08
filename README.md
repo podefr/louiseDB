@@ -13,12 +13,12 @@ into your own server, or use LouiseDB-server (coming soon to a github near you).
 - Support for transactions. All setters exhibit the ACID properties.
 - Immutability
 - Persist/Restore database to disk.
+- Hot reload of JS setters and getters without restarting the data store and losing database state
 
 ### Current Limitations:
 - DB size is limited to maximum amount of memory that your node.js process can allocate
 
 ### Desired features for MVP:
-- Hot reload of JS setters and getters without restarting the data store and losing database state
 - Distribute read/write across replicas for performance
 
 ### Desired features for second milestone:
