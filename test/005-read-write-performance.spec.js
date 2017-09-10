@@ -7,7 +7,7 @@ const expect = require('expect.js');
 
 const louiseDB = require('../src/index');
 
-describe.only('Load testing', function () {
+describe('Load testing', function () {
     this.timeout(60000);
 
     const persistFileName = './performance-file-size';
@@ -59,7 +59,7 @@ describe.only('Load testing', function () {
         }
     });
 
-    it('Scenario 3: read+write throughput large store size', async () => {
+    it('Scenario 4: read+write throughput large store size', async () => {
         const largeObject = getLargeObject(1e7);
 
         startTime = Date.now();
