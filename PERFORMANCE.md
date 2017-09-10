@@ -5,24 +5,24 @@
 Load testing scenario using ```005-read-write-performance.spec.js```:
 
 Scenario 1: read+writes throughput tiny store size
-    * as many read+writes as possible in 1 second
-    * ~10B insert size
-    * <10KB resulting store size
+* as many read+writes as possible in 1 second
+* ~10B insert size
+* <10KB resulting store size
 
 Scenario 2: read+writes throughput small store size
-    * as many read+writes as possible in 1 second
-    * ~700B insert size
-    * <1MB resulting store size
+* as many read+writes as possible in 1 second
+* ~700B insert size
+* <1MB resulting store size
 
 Scenario 3: read+writes throughput medium store size
-    * as many read+writes as possible in 1 second
-    * ~700KB insert size
-    * <10MB resulting store size
+* as many read+writes as possible in 1 second
+* ~700KB insert size
+* <10MB resulting store size
 
 Scenario 4: read+writes throughput large store size
-    * as many read+writes as possible in 1 second
-    * ~70MB insert size
-    * <100MB resulting store size
+* as many read+writes as possible in 1 second
+* ~70MB insert size
+* <100MB resulting store size
 
 ## Results
 
