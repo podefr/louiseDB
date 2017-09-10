@@ -24,6 +24,10 @@ Scenario 4: read+writes throughput large store size
 * ~70MB insert size
 * <100MB resulting store size
 
+Scenario 5: reads throughput large store size
+* as many reads as possible in 1 second
+* <100MB resulting store size
+
 ## Results
 
 First test run without performance improvements:
@@ -73,6 +77,7 @@ Overall performance gets improved by another ~40%.
 2 | 651 | 671 | 1000ms | ~580KB |
 3 | 14 | 17 | ~1100ms | ~15MB |
 4 | 1 | 1 | ~3800ms | ~85MB |
+5 | 19500 | 20500 | 1000ms | ~85MB |
 
 
 

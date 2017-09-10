@@ -24,7 +24,7 @@ describe('Load testing', function () {
     });
 
     it('Scenario 1: read+writes throughput tiny store size', async () => {
-        const largeObject = getLargeObject(1);    
+        const largeObject = getLargeObject(1);
 
         startTime = Date.now();
 
@@ -71,11 +71,22 @@ describe('Load testing', function () {
         }
     });
 
+    it('Scenario 5: reads throughput large store size', async () => {
+        await louiseDB.invokeSet('push', getLargeObject(1e7));
+
+        startTime = Date.now();
+
+        while ((Date.now() - startTime) < 1000) {
+            await louiseDB.invokeGet('getLength');
+            nbOfReadWrites++;
+        }
+    });
+
     afterEach(async () => {
         await louiseDB.stop();
 
         const { size } = await getFileStats(persistFileName);
-        console.log(`${nbOfReadWrites} read + writes with ${filesize(size)} resulting store size`);
+        console.log(`${nbOfReadWrites} IOPs with ${filesize(size)} resulting store size`);
 
         await deleteFile(persistFileName);
     });
