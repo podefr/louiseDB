@@ -28,13 +28,15 @@ Scenario 4: read+writes throughput large store size
 
 First test run without performance improvements:
 
-Scenario  | Min | Avg | Max
+Scenario | Min | Max | Exec Time | Store size
 -----------------------------
-1 | 1596
+1 | 1134 | 1159 | 1000ms | ~12KB
 -----------------------------
-2
+2 | 237  | 238  | 1000ms | ~208KB
+----------------------------- 
+3 | 7    | 8    | ~1035ms | ~6MB
 -----------------------------
-3
+4 | 1    | 1    | ~7000ms | ~85MB
 -----------------------------
 
 
