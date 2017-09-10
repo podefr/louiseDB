@@ -27,7 +27,7 @@ module.exports = {
 
     async stop() {
         if (accessorProcess) {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
                 accessorProcess.on('exit', (...args) => {
                     log.info(`Successfully stopped master DB process`);
                     resolve(args);
@@ -36,8 +36,8 @@ module.exports = {
                     log.error(`Error stopping master DB process: ${err}`);
                     reject(err);
                 });
-
-                log.debug('Stopping master DB process');
+                
+                await sendReceive('persist');
                 accessorProcess.kill();
             });
         }
@@ -69,7 +69,7 @@ function sendReceive(topicName, args) {
         });
 
         accessorProcess.send({
-            [topicName]: args
+            [topicName]: args || null
         });
     });
 }

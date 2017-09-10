@@ -7,7 +7,7 @@ const expect = require('expect.js');
 
 const louiseDB = require('../src/index');
 
-describe('Load testing', function () {
+describe.only('Load testing', function () {
     this.timeout(60000);
 
     const persistFileName = './performance-file-size';
@@ -72,10 +72,11 @@ describe('Load testing', function () {
     });
 
     afterEach(async () => {
+        await louiseDB.stop();
+
         const { size } = await getFileStats(persistFileName);
         console.log(`${nbOfReadWrites} read + writes with ${filesize(size)} resulting store size`);
 
-        await louiseDB.stop();
         await deleteFile(persistFileName);
     });
 });

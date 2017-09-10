@@ -1,4 +1,4 @@
-# History of performance improvement
+# History of performance improvements
 
 ## Load testing scenario
 
@@ -49,7 +49,17 @@ Returning true if the function succeeds instead of the whole store increase perf
 
 ### Optimization 2. Only persist store on stop(), not after every ```set```
 
+Persisting to disk on every call to a setter incurs a disk access. Persisting only when stopping the database only incurs the cost when performance isn't critical (outside of read/writes) and ensures that the DB can be restored
+from a previous state. However, not persisting after every sets runs the risk of losing all the data when the process doesn't stop cleanly as a result of calling stop.
+One solution could be to persist to disk on a different process than where the reads occur, as per optimizatio 3.
+Avoiding disk access on every save() increases performance by another ~30%
 
+| Scenario | Min | Max   | Exec Time (ms) | Store size |
+| :------- | :-: | :---: | :------------: | :--------: |
+1 | 2085 | 2140 | 1000ms | ~22KB |
+2 | 389 | 405 | 1000ms | ~356KB |
+3 | 12 | 13 | ~1100ms | ~11MB |
+4 | 1 | 1 | ~3800ms | ~85MB |
 
 
 ### Optimization 3. Leverage multiple processes
