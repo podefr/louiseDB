@@ -11,7 +11,15 @@
     "test-debug": "mocha"
   },
   "author": "Olivier Scherrer",
-  "keywords": ["immutable", "database", "json", "in memory", "no schema", "transactional", "db"],
+  "keywords": [
+    "immutable",
+    "database",
+    "json",
+    "in memory",
+    "no schema",
+    "transactional",
+    "db"
+  ],
   "license": "MIT",
   "dependencies": {
     "log": "^1.4.0",
@@ -22,6 +30,7 @@
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
+    "humanize": "0.0.9",
     "mocha": "^3.5.0"
   },
   "repository": {

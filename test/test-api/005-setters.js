@@ -1,7 +1,7 @@
 module.exports = {
-    pushNumber(store, number) {
+    push(store, item) {
         store.array = store.array || [];
-        store.array.push(number);
+        store.array.push(item);
 
         return store;
     }

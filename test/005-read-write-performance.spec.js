@@ -1,44 +1,81 @@
 'use strict';
 
-const { getTestAPI } = require('./helpers');
+const { filesize } = require('humanize');
+
+const { getTestAPI, deleteFile, getFileStats, getLargeObject } = require('./helpers');
 const expect = require('expect.js');
 
 const louiseDB = require('../src/index');
 
-describe('Given DB is initialized with basic getters and setters', function () {
+describe('Load testing', function () {
     this.timeout(60000);
 
-    let startDate;
+    const persistFileName = './performance-file-size';
+    let startTime, nbOfReadWrites;
 
-    before(async () => {
+    beforeEach(async () => {
         await louiseDB.init({
             setters: getTestAPI('005-setters'),
             getters: getTestAPI('005-getters'),
-            persist: './performance-file-size'
+            persist: persistFileName
         });
+
+        nbOfReadWrites = 0;
     });
 
-    describe('When I set and get from the DB a 1000 times', () => {
-        let startTime, endTime;
+    it('Scenario 1: read+writes throughput tiny store size', async () => {
+        const largeObject = getLargeObject(1);    
 
-        before(async () => {
-            startTime = Date.now();
+        startTime = Date.now();
 
-            for (let i = 0; i < 1000; i++) {
-                await louiseDB.invokeSet('pushNumber', i);
-                await louiseDB.invokeGet('getLength');
-            }
-
-            endTime = Date.now();
-        });
-
-        it('Then runs in less than 10 seconds', () => {
-            expect(endTime - startTime).to.lessThan(10000);
-            console.log(`time is ${(endTime - startTime) / 1000}s`);
-        });
+        while ((Date.now() - startTime) < 1000) {
+            await louiseDB.invokeSet('push', largeObject);
+            await louiseDB.invokeGet('getLength');
+            nbOfReadWrites++;
+        }
     });
 
-    after(async () => {
+    it('Scenario 2: read+write throughput small store size', async () => {
+        const largeObject = getLargeObject(100);
+
+        startTime = Date.now();
+
+        while ((Date.now() - startTime) < 1000) {
+            await louiseDB.invokeSet('push', largeObject);
+            await louiseDB.invokeGet('getLength');
+            nbOfReadWrites++;
+        }
+    });
+
+    it('Scenario 3: read+write throughput medium store size', async () => {
+        const largeObject = getLargeObject(1e5);
+
+        startTime = Date.now();
+
+        while ((Date.now() - startTime) < 1000) {
+            await louiseDB.invokeSet('push', largeObject);
+            await louiseDB.invokeGet('getLength');
+            nbOfReadWrites++;
+        }
+    });
+
+    it('Scenario 3: read+write throughput large store size', async () => {
+        const largeObject = getLargeObject(1e7);
+
+        startTime = Date.now();
+
+        while ((Date.now() - startTime) < 1000) {
+            await louiseDB.invokeSet('push', largeObject);
+            await louiseDB.invokeGet('getLength');
+            nbOfReadWrites++;
+        }
+    });
+
+    afterEach(async () => {
+        const { size } = await getFileStats(persistFileName);
+        console.log(`${nbOfReadWrites} read + writes with ${filesize(size)} resulting store size`);
+
         await louiseDB.stop();
+        await deleteFile(persistFileName);
     });
 });
