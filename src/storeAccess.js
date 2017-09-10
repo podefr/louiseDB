@@ -57,7 +57,7 @@ const API = {
             try {
                 store.setStore(setters[functionName](store.getStoreCopy(), ...args));
                 await persistence.persist(store.getStore());
-                sendSuccess(store.getStore());
+                sendSuccess(true);
             } catch (error) {
                 sendError(`ERROR 201: Failed calling invokeSet with ${functionName} / ${JSON.stringify(args)}`, error);
             }
