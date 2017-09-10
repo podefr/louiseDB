@@ -49,9 +49,9 @@ Returning true if the function succeeds instead of the whole store increase perf
 
 ### Optimization 2. Only persist store on stop(), not after every ```set```
 
-Persisting to disk on every call to a setter incurs a disk access. Persisting only when stopping the database only incurs the cost when performance isn't critical (outside of read/writes) and ensures that the DB can be restored
+Persisting to disk on every call to a ```setter``` incurs a disk access every time. Persisting only when stopping the database only incurs the cost when performance isn't critical (outside of read/writes) and ensures that the DB can be restored
 from a previous state. However, not persisting after every sets runs the risk of losing all the data when the process doesn't stop cleanly as a result of calling stop.
-One solution could be to persist to disk on a different process than where the reads occur, as per optimizatio 3.
+One solution could be to persist to disk on a different process than where the reads occur.
 Avoiding disk access on every save() increases performance by another ~30%
 
 | Scenario | Min | Max   | Exec Time (ms) | Store size |
@@ -61,7 +61,18 @@ Avoiding disk access on every save() increases performance by another ~30%
 3 | 12 | 13 | ~1100ms | ~11MB |
 4 | 1 | 1 | ~3800ms | ~85MB |
 
+### Optimization 3. Faster deep clone
 
-### Optimization 3. Leverage multiple processes
+The whole store is cloned on every call to a ```setter``` as the the store itself is never mutated. The change is applied to a copy of the store which then replaces the previous store. 
+Using ```clone-deep``` instead of ```JSON.parse(JSON.stingify)``` improves cloning performance.
+Overall performance gets improved by another ~40%.
+
+| Scenario | Min | Max   | Exec Time (ms) | Store size |
+| :------- | :-: | :---: | :------------: | :--------: |
+1 | 3246 | 3469 | 1000ms | ~36KB |
+2 | 651 | 671 | 1000ms | ~580KB |
+3 | 14 | 17 | ~1100ms | ~15MB |
+4 | 1 | 1 | ~3800ms | ~85MB |
+
 
 

@@ -1,5 +1,7 @@
+const cloneDeep = require('clone-deep');
+
 module.exports = {
     jsonCopy(json) {
-        return JSON.parse(JSON.stringify(json));
+        return cloneDeep(json);
     }
 };
