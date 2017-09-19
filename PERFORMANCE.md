@@ -30,6 +30,8 @@ Scenario 5: reads throughput large store size
 
 ## Results
 
+Performance measured on Macbook Pro 15: i7 2.3GHz 4 cores / 16GB / 512TB SSD
+
 First test run without performance improvements:
 
 | Scenario | Min | Max   | Exec Time (ms) | Store size |
