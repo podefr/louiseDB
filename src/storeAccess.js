@@ -1,3 +1,5 @@
+'use strict';
+
 const serializeError = require('serialize-error');
 const Store = require('./Store');
 const log = require('./log');

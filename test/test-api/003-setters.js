@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
     addStates(store, states) {
         store.states = store.states || [];

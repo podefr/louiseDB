@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
     push(store, item) {
         store.array = store.array || [];

@@ -1,3 +1,5 @@
+'use strict';
+
 const cloneDeep = require('clone-deep');
 
 module.exports = {

@@ -1,3 +1,5 @@
+'use strict';
+
 const Log = require('log');
 
 const { LOUISE_LOG_LEVEL } = process.env;

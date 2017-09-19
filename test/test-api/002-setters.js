@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
     addAlbum(store, album, tracks) {
         if (!store.albums) {
