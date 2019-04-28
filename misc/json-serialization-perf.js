@@ -4,13 +4,13 @@
 
 new Array(8).fill(1)
     .map((_, idx) => makeRunBenchmark(Math.pow(10, idx)))
-    .map(fn => 
+    .map(fn =>
         setTimeout(() => {
             fn()
             console.log(`
-memory Usage: ${ formatToUSNumber(process.memoryUsage().heapTotal) } B
+memory Usage: ${ formatToUSNumber(process.memoryUsage().heapTotal)} B
 ===
-            `)
+        `)
         }, 0)
     );
 
@@ -19,11 +19,11 @@ function makeRunBenchmark(objectSize) {
         const object = getObjectOfSize(objectSize);
         let serializedObject;
 
-        benchmark(`Serialize Object of size ${ formatToUSNumber(objectSize) }`, () => {
+        benchmark(`Serialize Object of size ${formatToUSNumber(objectSize)}`, () => {
             serializedObject = serialize(object);
         });
 
-        benchmark(`Deserialize Object of size ${ formatToUSNumber(objectSize) }`, () => {
+        benchmark(`Deserialize Object of size ${formatToUSNumber(objectSize)}`, () => {
             deserialize(serializedObject);
         });
     }
@@ -34,7 +34,7 @@ function benchmark(name, fn) {
 
     fn();
 
-    console.log(`test "${ name }" took ${ formatToUSNumber(Date.now() - startTime) } ms to execute`);
+    console.log(`test "${name}" took ${formatToUSNumber(Date.now() - startTime)} ms to execute`);
 }
 
 function serialize(object) {
@@ -46,7 +46,7 @@ function deserialize(string) {
 }
 
 function getObjectOfSize(size) {
-   return new Array(size).fill({
+    return new Array(size).fill({
         valueA: 1e7,
         valueB: "Short String"
     });

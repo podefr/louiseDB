@@ -4,13 +4,13 @@
 
 new Array(8).fill(1)
     .map((_, idx) => makeRunBenchmark(Math.pow(10, idx)))
-    .map(fn => 
+    .map(fn =>
         setTimeout(() => {
             fn()
             console.log(`
-memory Usage: ${ formatToUSNumber(process.memoryUsage().heapTotal) } B
+memory Usage: ${ formatToUSNumber(process.memoryUsage().heapTotal)} 
 ===
-            `)
+        `)
         }, 0)
     );
 
@@ -19,11 +19,11 @@ function makeRunBenchmark(objectSize) {
         const string = getStringifiedObjectOfSize(objectSize);
         let binary;
 
-        benchmark(`Convert Object of size ${ formatToUSNumber(objectSize) } to binary`, () => {
+        benchmark(`Convert Object of size ${formatToUSNumber(objectSize)} to binary`, () => {
             binary = toBinary(string);
         });
 
-        benchmark(`Convert Object of size ${ formatToUSNumber(objectSize) } from binary to string`, () => {
+        benchmark(`Convert Object of size ${formatToUSNumber(objectSize)} from binary to string`, () => {
             fromBinary(binary);
         });
     }
@@ -34,7 +34,7 @@ function benchmark(name, fn) {
 
     fn();
 
-    console.log(`test "${ name }" took ${ formatToUSNumber(Date.now() - startTime) } ms to execute`);
+    console.log(`test "${name}" took ${formatToUSNumber(Date.now() - startTime)} ms to execute`);
 }
 
 function toBinary(object) {
@@ -46,7 +46,7 @@ function fromBinary(buffer) {
 }
 
 function getStringifiedObjectOfSize(size) {
-   return JSON.stringify(new Array(size).fill({
+    return JSON.stringify(new Array(size).fill({
         valueA: 1e7,
         valueB: "Short String"
     }));
